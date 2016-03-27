@@ -1,0 +1,7 @@
+executables:
+  el:
+    main: El.hs
+    dependencies:
+      - base
+      - process
+      - template-haskell
