@@ -8,7 +8,6 @@ import System.Exit
 
 main :: IO ()
 main = do
-  die "boo"
   loop elephants
 
 loop (elephant : rest) = do
