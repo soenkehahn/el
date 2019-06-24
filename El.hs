@@ -2,12 +2,14 @@
 
 import           Control.Concurrent
 import           Data.Foldable
+import           GHC.IO.Encoding
 import           Language.Haskell.TH
+import           System.Exit
 import           System.Process
-import System.Exit
 
 main :: IO ()
 main = do
+  setLocaleEncoding utf8
   loop elephants
 
 loop (elephant : rest) = do
