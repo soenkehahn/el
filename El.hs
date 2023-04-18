@@ -1,11 +1,14 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 import           Control.Concurrent
+import           Control.Exception
+import           Control.Monad
 import           Data.Foldable
 import           GHC.IO.Encoding
 import           Language.Haskell.TH
 import           System.Exit
-import           System.Process
+import           System.IO
+import           Prelude hiding (readFile)
 
 main :: IO ()
 main = do
@@ -26,8 +29,15 @@ moveLeft = unlines . map (drop 1) . lines
 
 elephants :: [String]
 elephants = $(do
-  files <- runIO $ mapM readFile $
-    "elephant-01.txt" :
-    "elephant-02.txt" :
-    []
-  return $ ListE $ map (LitE . StringL) files)
+  let files =
+        "elephant-01.txt" :
+        "elephant-02.txt" :
+        []
+  contents <- runIO $ forM files $ \ file -> do
+    handle <- openFile file ReadMode
+    hSetEncoding handle utf8_bom
+    contents <- hGetContents handle
+    evaluate $ length contents
+    hClose handle
+    return contents
+  return $ ListE $ map (LitE . StringL) contents)
